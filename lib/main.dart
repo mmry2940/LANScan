@@ -98,10 +98,10 @@ class _MainScreenState extends State<MainScreen> {
     try {
       final session = await _sshClient!.execute(command);
       final output = await session.stdout
-          .expand((bytes) => bytes)
+          .cast<List<int>>()
           .transform(utf8.decoder)
           .join();
-      _sshOutput += '\n' + output;
+      _sshOutput += '\n$output';
     } catch (e) {
       _sshOutput += '\nError: $e';
     }
@@ -254,7 +254,8 @@ class FileManagementScreen extends StatelessWidget {
                       'cat ${fileController.text}',
                     );
                     final output = await session.stdout
-                        .transform(const Utf8Decoder())
+                        .cast<List<int>>()
+                        .transform(utf8.decoder)
                         .join();
                     contentController.text = output;
                     ScaffoldMessenger.of(context).showSnackBar(
